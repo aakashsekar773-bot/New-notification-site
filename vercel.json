@@ -1,11 +1,23 @@
 {
   "version": 2,
   "builds": [
-    { "src": "frontend/**", "use": "@vercel/static" },
-    { "src": "backend/api/*.js", "use": "@vercel/node" }
+    {
+      "src": "backend/api/**/*.js",
+      "use": "@vercel/node"
+    }
   ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/backend/api/$1.js" },
-    { "src": "/(.*)", "dest": "/frontend/$1" }
+  "rewrites": [
+    {
+      "source": "/api/saveToken",
+      "destination": "/backend/api/saveToken.js"
+    },
+    {
+      "source": "/api/sendToAll",
+      "destination": "/backend/api/sendToAll.js"
+    },
+    {
+      "source": "/firebase-messaging-sw.js",
+      "destination": "/firebase-messaging-sw.js"
+    }
   ]
 }
