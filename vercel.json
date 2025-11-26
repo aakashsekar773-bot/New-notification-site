@@ -4,20 +4,36 @@
     {
       "src": "backend/api/**/*.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "frontend/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "frontend/**/*.js",
+      "use": "@vercel/static"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/saveToken",
-      "destination": "/backend/api/saveToken.js"
+      "src": "/",
+      "dest": "/frontend/index.html"
     },
     {
-      "source": "/api/sendToAll",
-      "destination": "/backend/api/sendToAll.js"
+      "src": "/admin",
+      "dest": "/frontend/admin.html"
     },
     {
-      "source": "/firebase-messaging-sw.js",
-      "destination": "/firebase-messaging-sw.js"
+      "src": "/api/saveToken",
+      "dest": "/backend/api/saveToken.js"
+    },
+    {
+      "src": "/api/sendToAll",
+      "dest": "/backend/api/sendToAll.js"
+    },
+    {
+      "src": "/firebase-messaging-sw.js",
+      "dest": "/firebase-messaging-sw.js"
     }
   ]
 }
