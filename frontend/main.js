@@ -1,6 +1,10 @@
-// New Firebase V9 Imports: initializeApp, getMessaging, and utility functions
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+// V9 Modular Import-கள் நீக்கப்பட்டுள்ளன, ஏனெனில் நாம் அவற்றை index.html-ல் CDN மூலம் ஏற்றுகிறோம்
+// import { initializeApp } from "firebase/app";
+// import { getMessaging, getToken } from "firebase/messaging";
+
+// ------------------------------------------
+// V9 Global Access: Firebase Global objects இப்போது வேலை செய்ய வேண்டும்
+// ------------------------------------------
 
 // Your web app's Firebase configuration 
 const firebaseConfig = {
@@ -13,31 +17,26 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase App
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app); 
+const app = firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging(); // Global access to messaging
 
-// Logging function to display messages on the mobile screen
 function mobileLog(msg) {
     const logElement = document.getElementById("log");
     if (logElement) {
         logElement.innerHTML += msg + "<br>";
-        logElement.scrollTop = logElement.scrollHeight; // Scroll to bottom
+        logElement.scrollTop = logElement.scrollHeight;
     }
     console.log(msg);
 }
 
 // ------------------------------------------
-// படி 1: Service Worker-ஐப் பதிவு செய்தல்
-// Notification-கள் வேலை செய்ய இது அவசியம். firebase-messaging-sw.js ஆனது root-ல் இருக்க வேண்டும்.
+// படி 1: Service Worker-ஐப் பதிவு செய்தல் (இந்த பகுதி மாறவில்லை)
 // ------------------------------------------
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-        // Root-ல் உள்ள Service Worker-ஐப் பதிவு செய்யவும்
         navigator.serviceWorker.register('/firebase-messaging-sw.js')
             .then((registration) => {
                 mobileLog('Service Worker registered successfully.');
-                // SW பதிவு செய்யப்பட்டவுடன், Token-க்கான அனுமதியைக் கேட்கவும்
-                requestPermission();
             })
             .catch((error) => {
                 mobileLog('Service Worker registration failed: ' + error);
@@ -48,15 +47,17 @@ function registerServiceWorker() {
 }
 
 // ------------------------------------------
-// படி 2: அனுமதியைக் கேட்டு Token-ஐப் பெறுதல்
+// படி 2: அனுமதியைக் கேட்டு Token-ஐப் பெறுதல் (Global Syntax-க்கு மாறியுள்ளது)
 // ------------------------------------------
 function requestPermission() {
+    // Service Worker பதிவு செய்யப்பட்டவுடன் நாம் இதை அழைக்கவில்லை, 
+    // பட்டனைத் தட்டும்போது மட்டுமே அழைக்கிறோம்.
     Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
             mobileLog("Notification permission granted. Getting token...");
             
-            // New V9 way to get token
-            getToken(messaging, { vapidKey: "BPX91SeK7qbKYl7uGgp1qv4ycZ7qXZGyVcNqJMskFCTY37lxPTlbVgS9dFp3q-3-DT0xBfEWMPFxke7Xg6QCI5U" })
+            // Global Syntax: messaging.getToken()
+            messaging.getToken({ vapidKey: "BPX91SeK7qbKYl7uGgp1qv4ycZ7qXZGyVcNqJMskFCTY37lxPTlbVgS9dFp3q-3-DT0xBfEWMPFxke7Xg6QCI5U" })
             .then((token) => {
                 mobileLog("TOKEN: " + token);
                 
@@ -79,16 +80,16 @@ function requestPermission() {
 }
 
 // ------------------------------------------
-// படி 3: App திறந்திருக்கும்போது Notification-களை கையாளுதல்
+// படி 3: App திறந்திருக்கும்போது Notification-களை கையாளுதல் (Global Syntax-க்கு மாறியுள்ளது)
 // ------------------------------------------
-onMessage(messaging, (payload) => {
+messaging.onMessage((payload) => {
     mobileLog("Foreground message received: " + payload.notification.title);
     
     // App திறந்திருக்கும்போது, Notification-ஐ manually-ஆகக் காட்டுதல்
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: '/favicon.ico' // Default icon for local display
+        icon: '/favicon.ico'
     };
     new Notification(notificationTitle, notificationOptions);
 });
