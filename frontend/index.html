@@ -12,10 +12,15 @@
     <div id="log" style="background:#eee;padding:10px;margin-top:20px;"></div>
 
     <!-- 
-        V9 Modular Syntax-ஐப் பயன்படுத்தும்போது, compatibility SDK-கள் தேவையில்லை. 
-        main.js-ஐ ஒரு module-ஆகப் பயன்படுத்துகிறோம்.
+        பிழையைத் தவிர்க்க, V9 Firebase-ஐ ஒரு module-ஆக ஏற்றாமல்,
+        Script-ஆக ஏற்றவும். இது main.js-ல் உள்ள import-ஐத் தவிர்க்கிறது.
+        இந்தக் கோடு V9-ன் அனைத்து core functionalities-களையும் தருகிறது.
     -->
-    <script type="module" src="main.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js"></script>
+    
+    <!-- main.js-ஐ மீண்டும் ஒரு சாதாரண script-ஆக மாற்றவும் -->
+    <script src="main.js"></script> 
 </body>
 </html>
 
