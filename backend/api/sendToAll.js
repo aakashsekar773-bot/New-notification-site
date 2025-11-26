@@ -1,5 +1,5 @@
 import admin from "firebase-admin";
-import serviceAccount from "../serviceAccountKey.json" assert { type: "json" };
+import serviceAccount from "../serviceAccountKey.json" with { type: "json" };
 import { readFileSync } from "fs";
 
 if (!admin.apps.length) {
